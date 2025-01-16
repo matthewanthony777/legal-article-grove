@@ -2,10 +2,10 @@ const GITHUB_RAW_CONTENT_URL = "https://raw.githubusercontent.com";
 const REPO_OWNER = "lovable-tech";
 const REPO_NAME = "mdx-demo";
 const BRANCH = "main";
-const CONTENT_PATH = "articles"; // Removed 'content/' from the path since it's not in the repo structure
+const CONTENT_PATH = ""; // The file is in the root of the repository
 
 export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
-  const url = `${GITHUB_RAW_CONTENT_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${CONTENT_PATH}/${fileName}`;
+  const url = `${GITHUB_RAW_CONTENT_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${fileName}`;
   const response = await fetch(url);
   
   if (!response.ok) {
