@@ -23,6 +23,8 @@ const Article = () => {
     );
   }
 
+  const Content = article.content;
+
   return (
     <div className="min-h-screen bg-white">
       <article className="max-w-3xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
@@ -70,7 +72,7 @@ const Article = () => {
         </header>
 
         <div className="prose prose-lg max-w-none">
-          {article.content}
+          <Content />
         </div>
       </article>
     </div>
