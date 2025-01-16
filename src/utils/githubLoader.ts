@@ -1,8 +1,8 @@
 const GITHUB_API_URL = "https://api.github.com";
-const REPO_OWNER = "shadcn";
-const REPO_NAME = "ui";
+const REPO_OWNER = "matthewanthony777";
+const REPO_NAME = "legal-article-grove";
 const BRANCH = "main";
-const CONTENT_PATH = "apps/www/content/docs";  // Updated path that exists in shadcn/ui repo
+const CONTENT_PATH = "content/articles";  // Path to articles in the new repo
 
 export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
   const url = `${GITHUB_API_URL}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}/${fileName}?ref=${BRANCH}`;
