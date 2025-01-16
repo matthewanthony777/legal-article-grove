@@ -1,18 +1,19 @@
 const GITHUB_API_URL = "https://api.github.com";
-const REPO_OWNER = "shadcn";  // Using a public repo as example
+const REPO_OWNER = "shadcn";
 const REPO_NAME = "ui";
 const BRANCH = "main";
-const CONTENT_PATH = "apps/www/content/blog";  // Example content path
+const CONTENT_PATH = "apps/www/content/docs";  // Updated path that exists in shadcn/ui repo
 
 export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
   const url = `${GITHUB_API_URL}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}/${fileName}?ref=${BRANCH}`;
   
   try {
-    console.log(`Attempting to fetch ${fileName} from GitHub...`);
+    console.log(`Attempting to fetch ${fileName} from GitHub at URL: ${url}`);
     const response = await fetch(url);
     
     if (!response.ok) {
       console.warn(`Failed to fetch ${fileName}: ${response.status} ${response.statusText}`);
+      console.warn('Response body:', await response.text());
       console.warn('Using fallback content');
       return getSampleArticle();
     }
@@ -30,12 +31,15 @@ export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
 
 export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content: string }>> {
   try {
-    console.log('Attempting to fetch all MDX files...');
     const url = `${GITHUB_API_URL}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}?ref=${BRANCH}`;
+    console.log('Attempting to fetch all MDX files from URL:', url);
+    
     const response = await fetch(url);
     
     if (!response.ok) {
-      console.warn('Failed to fetch files from GitHub, using fallback content');
+      console.warn(`Failed to fetch files from GitHub: ${response.status} ${response.statusText}`);
+      console.warn('Response body:', await response.text());
+      console.warn('Using fallback content');
       return [{
         name: "sample-article.mdx",
         content: getSampleArticle()
