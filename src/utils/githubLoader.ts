@@ -1,33 +1,33 @@
-const GITHUB_RAW_CONTENT_URL = "https://raw.githubusercontent.com";
+const GITHUB_API_URL = "https://api.github.com";
 const REPO_OWNER = "lovable-tech";
 const REPO_NAME = "mdx-demo";
 const BRANCH = "main";
 const CONTENT_PATH = "content/articles";
 
 export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
-  const url = `${GITHUB_RAW_CONTENT_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${CONTENT_PATH}/${fileName}`;
+  const url = `${GITHUB_API_URL}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}/${fileName}?ref=${BRANCH}`;
   
   try {
     const response = await fetch(url);
     
     if (!response.ok) {
       console.error(`Failed to fetch ${fileName}: ${response.status} ${response.statusText}`);
-      // Fallback to sample content if GitHub fetch fails
       return getSampleArticle();
     }
     
-    return response.text();
+    const data = await response.json();
+    // GitHub API returns content as base64
+    const content = atob(data.content);
+    return content;
   } catch (error) {
     console.error(`Error fetching ${fileName}:`, error);
-    // Fallback to sample content if fetch fails
     return getSampleArticle();
   }
 }
 
 export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content: string }>> {
   try {
-    // First try to fetch the list of files from GitHub
-    const url = `${GITHUB_RAW_CONTENT_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${CONTENT_PATH}`;
+    const url = `${GITHUB_API_URL}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}?ref=${BRANCH}`;
     const response = await fetch(url);
     
     if (!response.ok) {
@@ -39,8 +39,12 @@ export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content:
     }
     
     const files = await response.json();
+    
+    // Filter for .mdx files only
+    const mdxFiles = files.filter((file: { name: string }) => file.name.endsWith('.mdx'));
+    
     return Promise.all(
-      files.map(async (file: { name: string }) => ({
+      mdxFiles.map(async (file: { name: string }) => ({
         name: file.name,
         content: await fetchMDXFromGitHub(file.name)
       }))
