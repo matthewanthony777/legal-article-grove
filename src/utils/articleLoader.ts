@@ -6,8 +6,8 @@ import sampleArticle from "../../content/articles/sample-article.mdx";
 
 const ARTICLES: Article[] = [
   {
-    ...(sampleArticle as MDXModule).frontmatter as ArticleMetadata,
-    content: (sampleArticle as MDXModule).default
+    ...(sampleArticle as unknown as MDXModule).frontmatter,
+    content: (sampleArticle as unknown as MDXModule).default
   }
 ];
 

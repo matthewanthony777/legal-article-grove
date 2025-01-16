@@ -5,9 +5,9 @@ export interface ArticleMetadata {
   description: string;
   slug: string;
   tags: string[];
-  coverImage?: string; // Optional cover image path
+  coverImage?: string;
 }
 
 export interface Article extends ArticleMetadata {
-  content: string;
+  content: React.ComponentType;
 }
