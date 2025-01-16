@@ -1,8 +1,8 @@
 const GITHUB_RAW_CONTENT_URL = "https://raw.githubusercontent.com";
-const REPO_OWNER = "lovable-tech"; // Updated to actual repo
-const REPO_NAME = "mdx-demo"; // Updated to actual repo
+const REPO_OWNER = "lovable-tech";
+const REPO_NAME = "mdx-demo";
 const BRANCH = "main";
-const CONTENT_PATH = "content/articles";
+const CONTENT_PATH = "articles"; // Removed 'content/' from the path since it's not in the repo structure
 
 export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
   const url = `${GITHUB_RAW_CONTENT_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${CONTENT_PATH}/${fileName}`;
