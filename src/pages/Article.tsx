@@ -46,7 +46,7 @@ const Article = () => {
             />
           )}
           <div className="flex gap-2">
-            {article.tags.map(tag => (
+            {article.tags?.map(tag => (
               <span 
                 key={tag}
                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
@@ -71,7 +71,7 @@ const Article = () => {
           </div>
         </header>
 
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 prose-img:rounded-lg prose-pre:bg-gray-800 prose-pre:text-white">
           <Content />
         </div>
       </article>
