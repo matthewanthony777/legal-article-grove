@@ -1,5 +1,62 @@
-// This is a temporary solution to load local content instead of fetching from GitHub
-const sampleArticle = `---
+const GITHUB_RAW_CONTENT_URL = "https://raw.githubusercontent.com";
+const REPO_OWNER = "lovable-tech";
+const REPO_NAME = "mdx-demo";
+const BRANCH = "main";
+const CONTENT_PATH = "content/articles";
+
+export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
+  const url = `${GITHUB_RAW_CONTENT_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${CONTENT_PATH}/${fileName}`;
+  
+  try {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error(`Failed to fetch ${fileName}: ${response.status} ${response.statusText}`);
+      // Fallback to sample content if GitHub fetch fails
+      return getSampleArticle();
+    }
+    
+    return response.text();
+  } catch (error) {
+    console.error(`Error fetching ${fileName}:`, error);
+    // Fallback to sample content if fetch fails
+    return getSampleArticle();
+  }
+}
+
+export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content: string }>> {
+  try {
+    // First try to fetch the list of files from GitHub
+    const url = `${GITHUB_RAW_CONTENT_URL}/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${CONTENT_PATH}`;
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.warn('Failed to fetch files from GitHub, using fallback content');
+      return [{
+        name: "sample-article.mdx",
+        content: getSampleArticle()
+      }];
+    }
+    
+    const files = await response.json();
+    return Promise.all(
+      files.map(async (file: { name: string }) => ({
+        name: file.name,
+        content: await fetchMDXFromGitHub(file.name)
+      }))
+    );
+  } catch (error) {
+    console.warn('Error fetching files from GitHub, using fallback content:', error);
+    return [{
+      name: "sample-article.mdx",
+      content: getSampleArticle()
+    }];
+  }
+}
+
+// Keep sample article as fallback content
+function getSampleArticle(): string {
+  return `---
 title: "Understanding Legal Technology Trends in 2024"
 date: "2024-01-16"
 author: "Jane Smith"
@@ -53,16 +110,4 @@ The future of legal technology promises even more innovation. Stay tuned for upd
 > "The practice of law is changing, and technology is leading the way." - Legal Tech Expert
 
 For more information, visit our [resources page](#).`;
-
-export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
-  // For now, just return the sample article content
-  return sampleArticle;
-}
-
-export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content: string }>> {
-  // Return an array with our sample article
-  return [{
-    name: "sample-article.mdx",
-    content: sampleArticle
-  }];
 }
