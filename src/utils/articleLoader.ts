@@ -16,11 +16,11 @@ async function processMDXContent(content: string): Promise<Article> {
 
   // Evaluate the compiled code
   const { default: Content, frontmatter } = await evaluate(compiled, {
-    ...runtime
+    ...runtime as any // Type assertion to fix spread error
   });
 
   return {
-    ...frontmatter,
+    ...frontmatter as ArticleMetadata, // Ensure correct type spreading
     content: Content
   };
 }
