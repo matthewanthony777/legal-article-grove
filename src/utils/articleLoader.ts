@@ -1,15 +1,45 @@
 import { Article, ArticleMetadata } from "@/types/article";
 import type { MDXModule } from "@/types/mdx";
+import { fetchAllMDXFiles } from "./githubLoader";
+import * as runtime from 'react/jsx-runtime';
+import { compile } from '@mdx-js/mdx';
+import { evaluate } from '@mdx-js/mdx';
 
-// Import the sample article
-import sampleArticle from "../../content/articles/sample-article.mdx";
+let ARTICLES: Article[] = [];
 
-const ARTICLES: Article[] = [
-  {
-    ...(sampleArticle as unknown as MDXModule).frontmatter,
-    content: (sampleArticle as unknown as MDXModule).default
+async function processMDXContent(content: string): Promise<Article> {
+  // Compile MDX to JavaScript
+  const compiled = await compile(content, {
+    outputFormat: 'function-body',
+    development: false
+  });
+
+  // Evaluate the compiled code
+  const { default: Content, frontmatter } = await evaluate(compiled, {
+    ...runtime
+  });
+
+  return {
+    ...frontmatter,
+    content: Content
+  };
+}
+
+export const initializeArticles = async () => {
+  try {
+    const mdxFiles = await fetchAllMDXFiles();
+    const processedArticles = await Promise.all(
+      mdxFiles.map(async ({ content }) => {
+        return processMDXContent(content);
+      })
+    );
+    
+    ARTICLES = processedArticles;
+  } catch (error) {
+    console.error("Failed to initialize articles:", error);
+    ARTICLES = [];
   }
-];
+};
 
 export const getAllArticles = (): Article[] => {
   return ARTICLES.sort((a, b) => 
@@ -23,7 +53,7 @@ export const getArticleBySlug = (slug: string): Article | undefined => {
 
 export const getArticlesByTag = (tag: string): Article[] => {
   return ARTICLES.filter(article => 
-    article.tags.includes(tag)
+    article.tags?.includes(tag)
   ).sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
   );

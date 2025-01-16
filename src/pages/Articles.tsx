@@ -1,8 +1,48 @@
-import { getAllArticles } from "@/utils/articleLoader";
+import { useEffect, useState } from "react";
+import { getAllArticles, initializeArticles } from "@/utils/articleLoader";
 import ArticleCard from "@/components/ArticleCard";
+import { Article } from "@/types/article";
+import { Loader2 } from "lucide-react";
 
 const Articles = () => {
-  const articles = getAllArticles();
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      try {
+        await initializeArticles();
+        setArticles(getAllArticles());
+      } catch (err) {
+        setError("Failed to load articles. Please try again later.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadArticles();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-600" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center space-y-2">
+          <h2 className="text-xl font-semibold text-gray-900">Error</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
