@@ -16,11 +16,9 @@ export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
 }
 
 export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content: string }>> {
-  // For demonstration, we'll use a static list of articles
-  // In production, you should fetch the list from GitHub API
+  // For demonstration, we'll use the sample article that exists in the repository
   const mdxFiles = [
-    "getting-started.mdx",
-    "welcome.mdx"
+    "sample-article.mdx"
   ];
   
   const articles = await Promise.all(
