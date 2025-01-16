@@ -1,17 +1,19 @@
 const GITHUB_API_URL = "https://api.github.com";
-const REPO_OWNER = "lovable-tech";
-const REPO_NAME = "mdx-demo";
+const REPO_OWNER = "shadcn";  // Using a public repo as example
+const REPO_NAME = "ui";
 const BRANCH = "main";
-const CONTENT_PATH = "content/articles";
+const CONTENT_PATH = "apps/www/content/blog";  // Example content path
 
 export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
   const url = `${GITHUB_API_URL}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}/${fileName}?ref=${BRANCH}`;
   
   try {
+    console.log(`Attempting to fetch ${fileName} from GitHub...`);
     const response = await fetch(url);
     
     if (!response.ok) {
-      console.error(`Failed to fetch ${fileName}: ${response.status} ${response.statusText}`);
+      console.warn(`Failed to fetch ${fileName}: ${response.status} ${response.statusText}`);
+      console.warn('Using fallback content');
       return getSampleArticle();
     }
     
@@ -20,13 +22,15 @@ export async function fetchMDXFromGitHub(fileName: string): Promise<string> {
     const content = atob(data.content);
     return content;
   } catch (error) {
-    console.error(`Error fetching ${fileName}:`, error);
+    console.warn(`Error fetching ${fileName}:`, error);
+    console.warn('Using fallback content');
     return getSampleArticle();
   }
 }
 
 export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content: string }>> {
   try {
+    console.log('Attempting to fetch all MDX files...');
     const url = `${GITHUB_API_URL}/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CONTENT_PATH}?ref=${BRANCH}`;
     const response = await fetch(url);
     
@@ -43,6 +47,14 @@ export async function fetchAllMDXFiles(): Promise<Array<{ name: string; content:
     // Filter for .mdx files only
     const mdxFiles = files.filter((file: { name: string }) => file.name.endsWith('.mdx'));
     
+    if (mdxFiles.length === 0) {
+      console.warn('No MDX files found, using fallback content');
+      return [{
+        name: "sample-article.mdx",
+        content: getSampleArticle()
+      }];
+    }
+
     return Promise.all(
       mdxFiles.map(async (file: { name: string }) => ({
         name: file.name,
