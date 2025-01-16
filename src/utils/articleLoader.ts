@@ -1,12 +1,13 @@
 import { Article, ArticleMetadata } from "@/types/article";
+import type { MDXModule } from "@/types/mdx";
 
 // Import the sample article
 import sampleArticle from "../../content/articles/sample-article.mdx";
 
 const ARTICLES: Article[] = [
   {
-    ...sampleArticle.frontmatter,
-    content: sampleArticle.default
+    ...(sampleArticle as MDXModule).frontmatter as ArticleMetadata,
+    content: (sampleArticle as MDXModule).default
   }
 ];
 
