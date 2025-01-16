@@ -36,6 +36,13 @@ const Article = () => {
         </Button>
         
         <header className="space-y-4 mb-8">
+          {article.coverImage && (
+            <img
+              src={article.coverImage}
+              alt={article.title}
+              className="w-full h-[400px] object-cover rounded-lg shadow-md"
+            />
+          )}
           <div className="flex gap-2">
             {article.tags.map(tag => (
               <span 

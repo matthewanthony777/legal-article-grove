@@ -5,6 +5,7 @@ export interface ArticleMetadata {
   description: string;
   slug: string;
   tags: string[];
+  coverImage?: string; // Optional cover image path
 }
 
 export interface Article extends ArticleMetadata {
