@@ -21,16 +21,18 @@ const ArticleCard = ({ article }: ArticleCardProps) => {
             />
           )}
           <div className="space-y-2">
-            <div className="flex gap-2">
-              {article.tags.map(tag => (
-                <span 
-                  key={tag}
-                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
+            {article.tags && article.tags.length > 0 && (
+              <div className="flex gap-2">
+                {article.tags.map(tag => (
+                  <span 
+                    key={tag}
+                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
             <h2 className="text-2xl font-semibold tracking-tight text-gray-900 group-hover:text-gray-600 transition-colors">
               {article.title}
             </h2>
